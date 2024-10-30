@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <title>Login Page</title>
+   
+  <!--Bootstrap 4 CDN-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+
+  <!--Custom styles-->
+  <link rel="stylesheet" type="text/css" href="../../css/Usuarios/login.css">
+</head>
+<body>
+  
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <!-- Botón para ir al inicio -->
+      <a class="navbar-brand ms-5" href="index.html">Inicio</a>
+
+      <!-- Opciones del menú superior -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Ver Propuestas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Seleccionar Localidad</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="d-flex justify-content-center h-100">
+      <div class="card">
+        <div class="card-header">
+          <h3>Inicio de sesión</h3>
+        </div>
+        <div class="card-body">
+          <form id="loginForm" onsubmit="loginUser(event)">
+            <!-- Cambiar de usuario a correo electrónico -->
+            <div class="input-group form-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+              </div>
+              <input type="email" id="email" class="form-control" placeholder="Correo electrónico" required>
+            </div>
+            <div class="input-group form-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-key"></i></span>
+              </div>
+              <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
+            </div>
+            <div class="row align-items-center remember">
+              <input type="checkbox">Recuerdame
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn float-right login_btn">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-center links">
+            ¿No tienes una cuenta? <a href="register.html">Regístrate</a>
+          </div>
+          <div class="d-flex justify-content-center">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loginUser(event) {
+  event.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const response = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(result.message);
+      localStorage.setItem('token', result.token); // Guarda el token en localStorage
+      // Redirigir según el rol del usuario
+      switch (result.role) {
+        case 'ciudadano':
+          window.location.href = '/roles/ciudadano.html';
+          break;
+        case 'decisor':
+          window.location.href = '/roles/decisor.html';
+          break;
+        case 'planeador':
+          window.location.href = '/roles/planeador.html';
+          break;
+        default:
+          alert('Rol no reconocido');
+          break;
+      }
+    } else {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    alert('Error al iniciar sesión');
+  }
+}
+
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Numans');
+
+html,body {
+  background-image: url('https://plus.unsplash.com/premium_photo-1697729999190-4cd4ae78be26?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Ym9nb3QlQzMlQTElMkMlMjBjb2xvbWJpYXxlbnwwfHwwfHx8MA%3D%3D');
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  font-family: 'Numans', sans-serif;
+}
+
+.container {
+  height: 100%;
+  align-content: center;
+}
+
+.card {
+  width: 450px;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  animation: fadeInUp 1s ease;
+}
+
+.card-header h3 {
+  color: white;
+}
+
+.input-group-prepend span {
+  width: 50px;
+  background-color: #FFC312;
+  color: black;
+  border: 0 !important;
+}
+
+input:focus {
+  outline: 0 0 0 0 !important;
+  box-shadow: 0 0 0 0 !important;
+}
+
+.register_btn {
+  color: black;
+  background-color: #FFC312;
+  width: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.register_btn:hover {
+  color: black;
+  background-color: white;
+}
+
+.links {
+  color: white;
+}
+
+.links a {
+  margin-left: 4px;
+  color: #FFC312;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: white;
+}
+.alert {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 1000;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+
+
+
+/* Animación*/
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

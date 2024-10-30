@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Votante</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="../../css/Usuarios/register.css">
+</head>
+<body>
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="card animated-card">
+      <div class="card-header">
+        <h3>Registro de Votante</h3>
+      </div>
+      <div class="card-body">
+        <form id="registerForm" onsubmit="registerUser(event)">
+          <!-- Nombres -->
+<div class="input-group form-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><i class="fas fa-user"></i></span>
+  </div>
+  <input type="text" id="nombres" name="nombres" class="form-control" placeholder="Nombres" required>
+</div>
+
+<!-- Apellidos -->
+<div class="input-group form-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><i class="fas fa-user"></i></span>
+  </div>
+  <input type="text" id="apellidos" name="apellidos" class="form-control" placeholder="Apellidos" required>
+</div>
+
+<!-- Identificación -->
+<div class="input-group form-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+  </div>
+  <input type="text" id="identificacion" name="identificacion" class="form-control" placeholder="Identificación" required>
+</div>
+
+
+          <!-- Correo electrónico -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            </div>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
+          </div>
+
+          <!-- Repetir Contraseña -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-key"></i></span>
+            </div>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Repite tu Contraseña" required>
+          </div>
+
+          <!-- Fecha de Nacimiento -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+            </div>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required>
+          </div>
+
+          <!-- Número de Celular -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-phone"></i></span>
+            </div>
+            <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Número de Celular" required>
+          </div>
+
+          <!-- Género -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+            </div>
+            <select id="genero" name="genero" class="form-control" required>
+              <option value="" disabled selected>Selecciona tu Género</option>
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+
+          <!-- Rol -->
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+            </div>
+            <select id="rol" name="rol" class="form-control" required>
+              <option value="" disabled selected>Selecciona tu Rol</option>
+              <option value="ciudadano">Ciudadano</option>
+              <option value="decisor">Decisor</option>
+              <option value="planeador">Planeador</option>
+            </select>
+          </div>
+          <div class="card-footer">
+            <div class="d-flex justify-content-center links">
+              ¿Ya tienes una cuenta?<a href="login.html">Inicia sesión</a>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn float-right register_btn">Registrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function registerUser(event) {
+      event.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+      
+      const data = {
+        nombres: document.getElementById('nombres').value,
+        apellidos: document.getElementById('apellidos').value,
+        identificacion: document.getElementById('identificacion').value,
+        email: document.getElementById('email').value,
+        password: password,
+        fechaNacimiento: document.getElementById('fechaNacimiento').value,
+        telefono: document.getElementById('telefono').value,
+        genero: document.getElementById('genero').value,
+        rol: document.getElementById('rol').value
+      };
+  
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+  
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          window.location.href = '/html/Usuarios/login.html';
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        alert('Error al registrar el usuario');
+      }
+    }
+  </script>  
+</body>
+</html>
