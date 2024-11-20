@@ -20,8 +20,18 @@ const User = db.define('User', {
   verified: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  resetToken: {
+    type: DataTypes.STRING, // Token de restablecimiento de contraseña
+    allowNull: true
+  },
+  resetTokenExpiry: {
+    type: DataTypes.DATE, // Fecha y hora de expiración del token
+    allowNull: true
   }
+  
 });
+
 
 // Función para encontrar un usuario por email
 User.findByEmail = async function (email, callback) {

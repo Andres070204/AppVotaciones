@@ -18,5 +18,25 @@ const sendVerificationEmail = (to, verificationLink) => {
   
     return transporter.sendMail(mailOptions);
   };
-
-module.exports = sendVerificationEmail;
+  const sendPasswordResetEmail = async (email, token) => {
+    const resetLink = `http://localhost:3000/html/Usuarios/changePassword.html?token=${token}`;
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER ,
+        to: email,
+        subject: 'Restablecer contraseña',
+        html: `
+          <h1>Solicitud de restablecimiento de contraseña</h1>
+          <p>Haz clic en el enlace para restablecer tu contraseña:</p>
+          <a href="${resetLink}">${resetLink}</a>
+          <p>Este enlace expira en 15 minutos.</p>
+        `
+      });
+      console.log(`Correo enviado a ${email}`);
+    } catch (error) {
+      console.error('Error al enviar el correo:', error);
+      throw new Error('No se pudo enviar el correo de restablecimiento.');
+    }
+  };
+  
+module.exports = { sendVerificationEmail, sendPasswordResetEmail };

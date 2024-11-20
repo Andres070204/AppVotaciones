@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Administrar Propuestas - Planeador</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+<!-- CSS para Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
+<!-- JS para Leaflet -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
+
+<!-- CSS para Leaflet Control Geocoder -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<!-- JS para Leaflet Control Geocoder -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
+
+  <style>
+    .container { margin-top: 20px; }
+    .form-container { flex: 1; padding-right: 50px; }
+    .map-container { flex: 1; height: 400px; }
+    #map { width: 100%; height: 100%; }
+    .propuesta-actions button { margin-right: 5px; }
+    .navbar {
+      background-color: #0056b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand, .navbar-nav .nav-link {
+      color: #fff;
+      font-weight: bold;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #cddcfa;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" ><i class="fas fa-city"></i> Planeador</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-eye"></i> Ver Propuestas</a></li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span id="userName">Cargando...</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="/html/Usuarios/editarPerfil.html"><i class="fas fa-user-edit"></i> Cambiar contraseña</a></li>
+              <li><a class="dropdown-item" id="logout" href="#"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      
+    </div>
+  </nav>
+
+
+  <!-- Contenedor principal -->
+  <div class="container mt-5">
+    <h2 id="formTitle">Agregar o Editar Propuesta de Proyecto</h2>
+
+    <!-- Formulario para agregar o editar propuesta -->
+    <form id="propuestaForm" onsubmit="guardarPropuesta(event)">
+      <input type="hidden" id="propuestaId" />
+      <div class="row">
+        <div class="col-md-6 form-container">
+          <div class="mb-3">
+            <label for="titulo" class="form-label">Título de la Propuesta</label>
+            <input type="text" class="form-control" id="titulo" required />
+          </div>
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" rows="4" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="localidad" class="form-label">Localidad</label>
+            <select class="form-select" id="localidad" required>
+              <option value="4.58917,-74.12817">Antonio Nariño</option>
+              <option value="4.66558,-74.07787">Barrios Unidos</option>
+              <option value="4.62881,-74.18548">Bosa</option>
+              <option value="4.65451,-74.05894">Chapinero</option>
+              <option value="4.54297,-74.15403">Ciudad Bolívar</option>
+              <option value="4.6838,-74.111">Engativá</option>
+              <option value="4.67833,-74.13978">Fontibón</option>
+              <option value="4.6261,-74.14889">Kennedy</option>
+              <option value="4.59575,-74.07458">La Candelaria</option>
+              <option value="4.61607,-74.08665">Los Mártires</option>
+              <option value="4.62788,-74.10395">Puente Aranda</option>
+              <option value="4.56589,-74.10793">Rafael Uribe Uribe</option>
+              <option value="4.56309,-74.0908">San Cristóbal</option>
+              <option value="4.60622,-74.07039">Santa Fe</option>
+              <option value="4.75591,-74.09016">Suba</option>
+              <option value="4.1461,-74.26986">Sumapaz</option>
+              <option value="4.64263,-74.09339">Teusaquillo</option>
+              <option value="4.58249,-74.12377">Tunjuelito</option>
+              <option value="4.71491,-74.03291">Usaquén</option>
+              <option value="4.50482,-74.10858">Usme</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="presupuesto" class="form-label">Presupuesto Estimado</label>
+            <input type="number" class="form-control" id="presupuesto" required />
+          </div>
+          <div class="mb-3">
+            <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+            <input type="date" class="form-control" id="fechaInicio" required />
+          </div>
+          <div class="mb-3">
+            <label for="fechaFin" class="form-label">Fecha de Finalización</label>
+            <input type="date" class="form-control" id="fechaFin" required />
+          </div>
+          
+          <div class="mb-3">
+            <label for="ubicacionGPS" class="form-label">Ubicación GPS</label>
+            <input type="text" class="form-control" id="ubicacionGPS" readonly />
+            <button id="btnCapturarGPS" class="btn btn-outline-primary">Capturar Ubicación GPS</button>
+          </div>
+          
+          
+          <button type="submit" class="btn btn-primary" id="submitButton">Guardar Propuesta</button>
+        </div>
+
+        <!-- Mapa interactivo -->
+        <div class="col-md-6 map-container">
+          <div id="map"></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Lista de propuestas -->
+    <div class="mt-5">
+      <h3>Propuestas Existentes</h3>
+      <ul id="propuestasList" class="list-group"></ul>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <!-- Leaflet JS para el mapa -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
+  <!-- Enlace al archivo de JavaScript externo -->
+  <script src="/js/roles/planeador.js"></script>
+</body>
+</html>

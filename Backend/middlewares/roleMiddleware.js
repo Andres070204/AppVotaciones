@@ -9,15 +9,26 @@ function authorizeRole(role) {
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Agregar la identificación y el rol al request
+      req.user = {
+        userId: decoded.userId,
+        identificacion: decoded.identificacion, 
+        role: decoded.role,
+      };
+
+      // Verificar el rol
       if (decoded.role !== role) {
-        return res.status(403).json({ message: 'No tienes permiso para acceder a esta página' });
+        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción.' });
       }
-      req.user = decoded; // Pasar la información del usuario al próximo middleware
+
       next();
     } catch (error) {
-      res.status(403).json({ message: 'Token no válido' });
+      console.error('Error al verificar el token:', error);
+      res.status(403).json({ message: 'Token no válido o expirado.' });
     }
   };
 }
+
 
 module.exports = authorizeRole;

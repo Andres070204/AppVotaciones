@@ -1,13 +1,18 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const authRoutes = require('./Backend/routes/auth'); // Asegúrate de que esta ruta es correcta
+const authRoutes = require('./Backend/routes/auth'); 
 const planeadorRoutes = require('./Backend/routes/planeador');
 const ciudadanoRoutes = require('./Backend/routes/ciudadano');
+const decisorRoutes = require('./Backend/routes/decisor');
+require('./Backend/models/relations');
+
 app.use(express.json());
 
 app.use('/planeador', planeadorRoutes);
 app.use('/ciudadano', ciudadanoRoutes);
+app.use('/decisor', decisorRoutes);
+
 
 // Sirve los archivos estáticos en la carpeta Frontend
 app.use(express.static(path.join(__dirname, 'Frontend')));

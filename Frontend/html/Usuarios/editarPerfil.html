@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Perfil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    #loadingIndicator {
+      display: none;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Editar Perfil</h1>
+  <form id="editProfileForm">
+    <div class="form-group">
+      <label for="email">Correo Electrónico:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="currentPassword">Contraseña Actual:</label>
+      <input type="password" id="currentPassword" name="currentPassword" required>
+    </div>
+    <div class="form-group">
+      <label for="newPassword">Nueva Contraseña:</label>
+      <input type="password" id="newPassword" name="newPassword" placeholder="Dejar vacío para no cambiar">
+    </div>
+    <button type="submit">Guardar Cambios</button>
+    <div id="loadingIndicator">Guardando cambios...</div>
+  </form>
+
+  <script>
+    // Cargar los datos del usuario
+    const token = localStorage.getItem('token');
+    function decodeToken(token) {
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload;
+      } catch (e) {
+        console.error('Error al decodificar el token:', e);
+        return null;
+      }
+    }
+
+    const userData = decodeToken(token);
+
+    if (userData) {
+      document.getElementById('email').value = userData.email || '';
+    } else {
+      alert('Por favor, inicia sesión primero.');
+      window.location.href = '/html/Usuarios/login.html';
+    }
+
+    // Guardar los cambios
+    document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      loadingIndicator.style.display = 'block'; // Mostrar indicador de carga
+
+      try {
+        const response = await fetch('http://localhost:3000/ciudadano/editar-perfil', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email, currentPassword, newPassword }),
+        });
+
+        loadingIndicator.style.display = 'none'; // Ocultar indicador de carga
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Error al actualizar el perfil.');
+        }
+
+        alert('Perfil actualizado con éxito. Ingrese nuevamente Sesión con las credenciales actualizadas');
+        window.location.href = '/html/Usuarios/login.html'; // Redirige al ciudadano.html
+      } catch (error) {
+        loadingIndicator.style.display = 'none'; // Ocultar indicador de carga en caso de error
+        console.error('Error al actualizar el perfil:', error);
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -30,6 +30,10 @@ const Propuesta = sequelize.define('Propuesta', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  
+  
+
 });
+
 
 module.exports = Propuesta;

@@ -1,5 +1,8 @@
+const bcrypt = require('bcrypt');
 const express = require('express');
 const Propuesta = require('../models/Propuesta');
+const User = require('../models/User');
+const authorizeRole = require('../middlewares/roleMiddleware');
 const router = express.Router();
 
 // Crear propuesta
@@ -89,6 +92,37 @@ router.get('/propuestas', async (req, res) => {
   } catch (error) {
     console.error('Error al obtener las propuestas:', error);
     res.status(500).json({ message: 'Error al obtener las propuestas' });
+  }
+});
+router.put('/editar-perfil', authorizeRole('planeador'), async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body;
+    const identificacion = req.user.identificacion;
+
+    // Buscar usuario
+    const usuario = await User.findOne({ where: { identificacion } });
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
+    // Verificar contraseña actual
+    const isPasswordValid = await bcrypt.compare(currentPassword, usuario.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Contraseña actual incorrecta.' });
+    }
+
+    // Actualizar correo y/o contraseña
+    if (email) usuario.email = email;
+    if (newPassword) {
+      const salt = await bcrypt.genSalt(10);
+      usuario.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    await usuario.save();
+    res.status(200).json({ message: 'Perfil actualizado correctamente.' });
+  } catch (error) {
+    console.error('Error en el backend:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 });
 
